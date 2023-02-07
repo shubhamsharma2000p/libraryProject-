@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+
+        <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+        <property name="DEV_LOG_PATH" value="/home/shubham/logs/library" />
+        <property name="DEV_LOG_ARCHIVE_PATH" value="${DEV_LOG_PATH}/archive" />
+        <property name="DEV_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}[%-10X{API}]- %msg%n" />
+
+
+        <springProfile name="dev">
+                <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                        <encoder>
+                                <pattern>${DEV_PATTERN}</pattern>
+                        </encoder>
+                        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                                <level>DEBUG</level>
+                        </filter>
+                </appender>
+
+                <appender name="API" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                        <file>${DEV_LOG_PATH}/libraryApi.log</file>
+                        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                                <fileNamePattern>${DEV_LOG_ARCHIVE_PATH}/loyaltyAPILog.%d{yyyy-MM-dd}.gz</fileNamePattern>
+                        </rollingPolicy>
+                        <encoder>
+                                <pattern>${DEV_PATTERN}</pattern>
+                        </encoder>
+                </appender>
+
+
+                <logger name="API_Log" level="info" additivity="false">
+                        <appender-ref ref="API" />
+                        <appender-ref ref="STDOUT" />
+                </logger>
+
+                <root level="INFO" additivity="false">
+                        <appender-ref ref="STDOUT" />
+                </root>
+        </springProfile>
+
+
+</configuration>
